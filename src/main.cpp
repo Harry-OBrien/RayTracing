@@ -1,4 +1,6 @@
 #include <iostream>
+#include "vec3.hpp"
+#include "Colour.hpp"
 
 int main(int argc, char** argv) {
 
@@ -23,20 +25,12 @@ int main(int argc, char** argv) {
             << std::flush;
 
         for (int i = 0; i < imageWidth; i++) {
-            auto r = double(i) / (imageWidth - 1);
-            auto g = double(j) / (imageHeight -1);
-            auto b = 0.25;
+            colour pixelColour(
+                double(i) / (imageWidth - 1),
+                double(j) / (imageHeight -1),
+                0.25);
 
-            int ir = static_cast<int>(255.999 * r);
-            int ig = static_cast<int>(255.999 * g);
-            int ib = static_cast<int>(255.999 * b);
-        
-            std::cout << ir
-                << " "
-                << ig
-                << " "
-                << ib
-                << std::endl;
+            write_colour(std::cout, pixelColour);
         }
     }
 

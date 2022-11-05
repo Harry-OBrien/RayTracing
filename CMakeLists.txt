@@ -7,6 +7,8 @@ enable_testing()
 
 set(src_files
     ./src/main.cpp
+    ./src/Colour.cpp
+    ./src/vec3.cpp
 )
 
 add_executable(${PROJECT_NAME}
