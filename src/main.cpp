@@ -17,6 +17,11 @@ int main(int argc, char** argv) {
         << std::endl;
 
     for(int j = imageHeight-1; j >= 0; j--) {
+        std::cerr << "Scanlines remaining: "
+            << j
+            << std::endl
+            << std::flush;
+
         for (int i = 0; i < imageWidth; i++) {
             auto r = double(i) / (imageWidth - 1);
             auto g = double(j) / (imageHeight -1);
@@ -34,6 +39,8 @@ int main(int argc, char** argv) {
                 << std::endl;
         }
     }
+
+    std::cerr << "\nDone!" << std::endl;
 
     return 0;
 }
