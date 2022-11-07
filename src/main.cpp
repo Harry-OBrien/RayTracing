@@ -5,6 +5,7 @@
 #include "HittableList.hpp"
 #include "Colour.hpp"
 #include "Sphere.hpp"
+#include "Camera.hpp"
 
 colour rayColour(Ray const& r, Hittable const& world) {
     hit_record rec;
@@ -22,6 +23,7 @@ int main(int argc, char** argv) {
     double aspect_ratio = 16.0 / 9.0;
     int const imageWidth = 1024;
     int const imageHeight = static_cast<int>(imageWidth / aspect_ratio);
+    int const samplesPerPixel = 100;
 
     // World
     HittableList world;
@@ -29,14 +31,7 @@ int main(int argc, char** argv) {
     world.add(make_shared<Sphere>(point3(0,0,-1), 0.5));
 
     // Camera
-    double viewportHeight = 2.0;
-    double viewportWidth = aspect_ratio * viewportHeight;
-    double focalLength = 1.0;
-
-    point3 origin = point3();
-    vec3 horizontal = vec3(viewportWidth, 0, 0);
-    vec3 vertical = vec3(0, viewportHeight, 0);
-    vec3 llCorner = origin - horizontal/2 - vertical/2 - vec3(0, 0, focalLength);
+    Camera cam;
 
     // Render
     std::cout << "P3\n"
@@ -46,21 +41,22 @@ int main(int argc, char** argv) {
         << "\n255"
         << std::endl;
 
-    for (int j = imageHeight-1; j >= 0; --j) {
+    for (int j = imageHeight-1; j >= 0; j--) {
         std::cerr << "Scanlines remaining: "
             << j
             << " "
             << std::endl
             << std::flush;
 
-        for (int i = 0; i < imageWidth; ++i) {
-            double u = double(i) / (imageWidth - 1);
-            double v = double(j) / (imageHeight - 1);
-
-            Ray r(origin, llCorner + u*horizontal + v*vertical - origin);
-            colour pixelColour = rayColour(r, world);
-            
-            write_colour(std::cout, pixelColour);
+        for (int i = 0; i < imageWidth; i++) {
+            colour pixelColour;
+            for (int s = 0; s < samplesPerPixel; s++) {
+                double u = (i + random_double()) / (imageWidth - 1);
+                double v = (j + random_double()) / (imageHeight - 1);
+                Ray r = cam.getRay(u, v);
+                pixelColour += rayColour(r, world);
+            }
+            write_colour(std::cout, pixelColour, samplesPerPixel);
         }
     }
 

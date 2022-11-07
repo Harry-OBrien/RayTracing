@@ -12,6 +12,7 @@ set(src_files
     ./src/Ray.cpp
     ./src/HittableList.cpp
     ./src/Sphere.cpp
+    ./src/Camera.cpp
 )
 
 add_executable(${PROJECT_NAME}
