@@ -9,6 +9,9 @@ set(src_files
     ./src/main.cpp
     ./src/Colour.cpp
     ./src/vec3.cpp
+    ./src/Ray.cpp
+    ./src/HittableList.cpp
+    ./src/Sphere.cpp
 )
 
 add_executable(${PROJECT_NAME}
