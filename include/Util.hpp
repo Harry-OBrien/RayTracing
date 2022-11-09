@@ -4,7 +4,7 @@
 #include <cmath>
 #include <limits>
 #include <memory>
-#include <cstdlib>
+#include <random>
 
 // Usings
 
@@ -22,7 +22,9 @@ inline double deg_to_rad(double degrees) {
 
 inline double random_double() {
     //random R in [0, 1)
-    return ((double) rand() / (RAND_MAX)) + 1;
+    static std::uniform_real_distribution<double> distribution(0.0, 1.0);
+    static std::mt19937 generator;
+    return distribution(generator);
 }
 
 inline double random_double(double min, double max) {
@@ -38,7 +40,7 @@ inline double clamp(double x, double min, double max) {
 }
 
 // Common headers
-#include "Ray.hpp"
-#include "vec3.hpp"
+// #include "Ray.hpp"/
+// #include "vec3.hpp"
 
 #endif /* UTIL_HPP */

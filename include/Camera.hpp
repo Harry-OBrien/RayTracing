@@ -7,19 +7,43 @@
 class Camera {
 public:
     point3 origin;
-    point3 llCorner;
-    vec3 horizontal, vertical;
+    point3 lower_left_corner;
+    vec3 horizontal;
+    vec3 vertical;
+    vec3 u, v, w;
+    double lens_radius;
+    double time0, time1;  // shutter open/close times
 public:
-    Camera() {
-        double const ASPECT_RATIO = 16.0 / 9.0;
-        double viewportHeight = 2.0;
-        double viewportWidth = ASPECT_RATIO * viewportHeight;
-        double focalLength = 1.0;
+    Camera() : Camera(point3(0,0,-1), point3(0,0,0), vec3(0,1,0), 40, 1, 0, 10) {}
 
-        origin = point3(0, 0, 0);
-        horizontal = vec3(viewportWidth, 0, 0);
-        vertical = vec3(0, viewportHeight, 0);
-        llCorner = origin - horizontal/2 - vertical/2 - vec3(0, 0, focalLength);
+    Camera(
+        point3 lookfrom,
+        point3 lookat,
+        vec3   vup,
+        double vfov, // vertical field-of-view in degrees
+        double aspect_ratio,
+        double aperture,
+        double focus_dist,
+        double _time0 = 0,
+        double _time1 = 0
+    ) {
+        auto theta = deg_to_rad(vfov);
+        auto h = tan(theta/2);
+        auto viewport_height = 2.0 * h;
+        auto viewport_width = aspect_ratio * viewport_height;
+
+        w = unit_vector(lookfrom - lookat);
+        u = unit_vector(cross(vup, w));
+        v = cross(w, u);
+
+        origin = lookfrom;
+        horizontal = focus_dist * viewport_width * u;
+        vertical = focus_dist * viewport_height * v;
+        lower_left_corner = origin - horizontal/2 - vertical/2 - focus_dist*w;
+
+        lens_radius = aperture / 2;
+        time0 = _time0;
+        time1 = _time1;
     }
 
     Ray getRay(double u, double v) const;

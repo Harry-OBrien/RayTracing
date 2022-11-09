@@ -9,7 +9,6 @@ set(src_files
     ./src/main.cpp
     ./src/Colour.cpp
     ./src/vec3.cpp
-    ./src/Ray.cpp
     ./src/HittableList.cpp
     ./src/Sphere.cpp
     ./src/Camera.cpp
@@ -18,7 +17,7 @@ set(src_files
 add_executable(${PROJECT_NAME}
     ${src_files}
 )
-target_include_directories(${PROJECT_NAME} PUBLIC ./include)
+target_include_directories(${PROJECT_NAME} PUBLIC include)
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})

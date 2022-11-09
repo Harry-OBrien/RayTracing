@@ -6,6 +6,7 @@
 class Ray {
     point3 orig;
     vec3 dir;
+    double tm;
 
 public:
     Ray() {}
@@ -13,10 +14,17 @@ public:
         : orig(origin), dir(direction)
     {}
 
+    Ray(const point3& origin, const vec3& direction, double time)
+        : orig(origin), dir(direction), tm(time)
+    {}
+
     point3 origin() const { return orig; }
     point3 direction() const { return dir; }
+    double time() const    { return tm; }
 
-    point3 at(double t) const;
+    point3 at(double t) const {
+        return orig + t*dir;
+    };
 };
 
 #endif /* RAY_HPP */
