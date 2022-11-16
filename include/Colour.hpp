@@ -1,9 +1,9 @@
-#ifndef COLOR_HPP
-#define COLOR_HPP
+#ifndef COLOUR_HPP
+#define COLOUR_HPP
 
 #include <iostream>
-#include "vec3.hpp"
+#include "Vec3.hpp"
 
-void write_colour(std::ostream &out, colour pixel_color, int samplesPerPixel);
+void write_colour(std::ostream &out, colour pixel_colour, int samplesPerPixel);
 
-#endif /* COLOR_HPP */
+#endif /* COLOUR_HPP */

@@ -20,16 +20,16 @@ inline double deg_to_rad(double degrees) {
     return degrees * M_PI / 180.0;
 }
 
-inline double random_double() {
+__host__ inline double random_float() {
     //random R in [0, 1)
     static std::uniform_real_distribution<double> distribution(0.0, 1.0);
     static std::mt19937 generator;
     return distribution(generator);
 }
 
-inline double random_double(double min, double max) {
+__host__ inline double random_float(double min, double max) {
     // [min, max)
-    return min + (max-min)*random_double();
+    return min + (max-min)*random_float();
 }
 
 inline double clamp(double x, double min, double max) {
@@ -38,9 +38,5 @@ inline double clamp(double x, double min, double max) {
 
     return x;
 }
-
-// Common headers
-// #include "Ray.hpp"/
-// #include "vec3.hpp"
 
 #endif /* UTIL_HPP */
