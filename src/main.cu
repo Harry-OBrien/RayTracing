@@ -15,7 +15,19 @@ void check_cuda(cudaError_t result, char const *const func, const char *const fi
     }
 }
 
+__device__ bool hit_sphere(point3 const& center, double radius, Ray const& r) {
+    vec3 oc = r.origin() - center;
+    float a = dot(r.direction(), r.direction());
+    float b = 2.0f * dot(oc, r.direction());
+    float c = dot(oc, oc) - radius*radius;
+    float discriminant = b*b - 4.0f*a*c;
+    return (discriminant > 0);
+}
+
 __device__ vec3 rayColour(const Ray& r) {
+    if (hit_sphere(point3(0, 0, -1), 0.5, r))
+        return vec3(1, 0, 0);
+
    vec3 unit_direction = unit_vector(r.direction());
    float t = 0.5f*(unit_direction.y() + 1.0f);
    return (1.0f-t)*vec3(1.0, 1.0, 1.0) + t*vec3(0.5, 0.7, 1.0);
@@ -26,9 +38,9 @@ __global__ void render(vec3 *fb, int max_x, int max_y, vec3 lower_left_corner, v
    int j = threadIdx.y + blockIdx.y * blockDim.y;
    if((i >= max_x) || (j >= max_y)) return;
    int pixel_index = j*max_x + i;
-   float u = float(i) / float(max_x);
-   float v = float(j) / float(max_y);
-   Ray r(origin, lower_left_corner + u*horizontal + v*vertical);
+   float u = float(i) / float(max_x - 1);
+   float v = float(j) / float(max_y - 1);
+   Ray r(origin, lower_left_corner + u*horizontal + v*vertical - origin);
    fb[pixel_index] = rayColour(r);
 }
 
@@ -38,6 +50,16 @@ int main(int argc, char** argv) {
     int const imageWidth = 1024;
     int const imageHeight = static_cast<int>(imageWidth / aspect_ratio);
     int numPixels = imageHeight * imageWidth;
+
+    // Camera
+    float viewport_height = 2.0;
+    float viewport_width = aspect_ratio * viewport_height;
+    float focal_length = 1.0;
+
+    point3 origin = point3(0, 0, 0);
+    vec3 horizontal = vec3(viewport_width, 0, 0);
+    vec3 vertical = vec3(0, viewport_height, 0);
+    vec3 lower_left_corner = origin - horizontal/2 - vertical/2 - vec3(0, 0, focal_length);
 
     // Allocate frame buffer (fb)
     size_t fb_size = numPixels*sizeof(vec3);
@@ -53,10 +75,11 @@ int main(int argc, char** argv) {
     dim3 threads(tx, ty);
     render<<<blocks, threads>>>(
         fb, imageWidth, imageHeight,
-        vec3(-2.0, -1.0, -1.0),
-        vec3(4.0, 0.0, 0.0),
-        vec3(0.0, 2.0, 0.0),
-        vec3(0.0, 0.0, 0.0));
+        lower_left_corner,
+        horizontal,
+        vertical,
+        origin);
+
     checkCudaErrors(cudaGetLastError());
     checkCudaErrors(cudaDeviceSynchronize());
 
