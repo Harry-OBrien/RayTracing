@@ -12,12 +12,9 @@ using std::shared_ptr;
 using std::make_shared;
 using std::sqrt;
 
-// Constants
-const double INF = std::numeric_limits<double>::infinity();
-
 // Util functions
-inline double deg_to_rad(double degrees) {
-    return degrees * M_PI / 180.0;
+__device__ inline float deg_to_rad(float degrees) {
+    return degrees * M_PIf / 180.0f;
 }
 
 __host__ inline double random_float() {
@@ -32,7 +29,7 @@ __host__ inline double random_float(double min, double max) {
     return min + (max-min)*random_float();
 }
 
-inline double clamp(double x, double min, double max) {
+__host__ inline double clamp(double x, double min, double max) {
     if (x < min) return min;
     if (x > max) return max;
 
